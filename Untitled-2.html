@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>🎱 어버이날 특별 LOTTO 이벤트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#e0e0e0;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px 0}
+#app{
+  font-family:'Noto Sans KR',sans-serif;
+  background:#F5F5F5;
+  min-height:600px;
+  width:100%;
+  max-width:380px;
+  color:#222;
+  border-radius:20px;
+  overflow:hidden;
+  position:relative;
+  box-shadow:0 8px 40px rgba(0,0,0,.18);
+}
+.screen{display:none;flex-direction:column;min-height:600px}
+.screen.active{display:flex}
+ 
+.home-top{
+  background:linear-gradient(135deg,#6C3CE1,#3B82F6);
+  padding:60px 24px 40px;text-align:center;position:relative;
+}
+.home-logo{font-family:'Black Han Sans',sans-serif;font-size:42px;color:#fff;letter-spacing:3px}
+.home-balls{display:flex;justify-content:center;gap:10px;margin-top:24px}
+.h-ball{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Black Han Sans',sans-serif;font-size:15px;color:#fff;animation:hfloat 2.5s ease-in-out infinite}
+@keyframes hfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.home-body{padding:20px 20px 28px;display:flex;flex-direction:column;gap:14px}
+.info-card{background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 12px rgba(0,0,0,.07)}
+.info-card h3{font-size:13px;font-weight:700;color:#6C3CE1;margin-bottom:6px}
+.info-card p{font-size:12px;color:#666;line-height:1.7}
+.btn-start{width:100%;padding:17px;background:linear-gradient(135deg,#6C3CE1,#3B82F6);color:#fff;font-size:17px;font-weight:700;border:none;border-radius:14px;cursor:pointer;font-family:'Black Han Sans',sans-serif;letter-spacing:2px;box-shadow:0 4px 16px rgba(108,60,225,.35);transition:transform .15s}
+.btn-start:active{transform:scale(.97)}
+ 
+.page-header{background:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #eee}
+.back-btn{background:none;border:1px solid #ddd;color:#444;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.page-title{font-size:15px;font-weight:700;color:#222}
+ 
+.prog-bar{height:4px;background:#eee}
+.prog-fill{height:100%;background:linear-gradient(90deg,#6C3CE1,#3B82F6);transition:width .4s}
+ 
+.page-body{flex:1;padding:22px 20px;display:flex;flex-direction:column;gap:18px;background:#F5F5F5}
+.step-info{display:flex;flex-direction:column;gap:3px}
+.step-num{font-size:11px;color:#6C3CE1;font-weight:700}
+.step-q{font-size:19px;font-weight:700;color:#111}
+ 
+.count-row{display:flex;gap:10px;justify-content:space-between}
+.c-btn{flex:1;aspect-ratio:1;border-radius:14px;border:2px solid #ddd;background:#fff;color:#333;font-size:22px;font-weight:700;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;font-family:'Black Han Sans',sans-serif;-webkit-tap-highlight-color:transparent}
+.c-btn.sel{border-color:#6C3CE1;background:#6C3CE1;color:#fff;transform:scale(1.05)}
+ 
+.method-row{display:flex;gap:12px}
+.m-btn{flex:1;padding:22px 12px;border-radius:14px;border:2px solid #ddd;background:#fff;cursor:pointer;text-align:center;transition:all .18s;-webkit-tap-highlight-color:transparent}
+.m-btn.sel{border-color:#6C3CE1;background:#F0ECFF}
+.m-icon{font-size:30px;margin-bottom:8px}
+.m-name{font-size:14px;font-weight:700;color:#333}
+.m-desc{font-size:11px;color:#999;margin-top:4px}
+.m-btn.sel .m-name{color:#6C3CE1}
+ 
+.btn-next{margin-top:auto;width:100%;padding:16px;background:#ddd;color:#999;font-size:15px;font-weight:700;border:none;border-radius:12px;cursor:not-allowed;font-family:'Noto Sans KR',sans-serif;transition:all .2s}
+.btn-next.on{background:linear-gradient(135deg,#6C3CE1,#3B82F6);color:#fff;cursor:pointer;box-shadow:0 4px 14px rgba(108,60,225,.3)}
+.btn-next.on:active{transform:scale(.98)}
+ 
+.sel-row{display:flex;gap:6px;flex-wrap:wrap;min-height:50px;background:#fff;border-radius:12px;padding:10px;border:1.5px solid #eee;align-items:center}
+.sel-ball{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;animation:pop .2s ease}
+@keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
+.num-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:5px}
+.n-btn{aspect-ratio:1;border-radius:50%;border:1.5px solid #e0e0e0;background:#fff;color:#333;font-size:10px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.n-btn.p{color:#fff;border-width:2px}
+.n-btn:disabled{opacity:.3;cursor:default}
+ 
+.ticket-list{display:flex;flex-direction:column;gap:10px;overflow-y:auto;max-height:340px}
+.ticket{background:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 1px 6px rgba(0,0,0,.07)}
+.tkt-lbl{font-size:11px;color:#999;margin-bottom:8px;font-weight:700}
+.tkt-balls{display:flex;gap:6px;flex-wrap:wrap}
+.t-ball{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+ 
+/* Countdown & Video Screen Styles */
+.cd-screen{background:linear-gradient(160deg,#6C3CE1,#3B82F6);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;min-height:600px}
+.live-dot{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);padding:5px 14px;border-radius:20px;color:#fff;font-size:12px;font-weight:700;margin-bottom:24px}
+.dot{width:8px;height:8px;background:#FF4444;border-radius:50%;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.cd-title{font-family:'Black Han Sans',sans-serif;font-size:26px;color:#fff;margin-bottom:6px}
+.cd-sub{font-size:14px;color:rgba(255,255,255,.9);margin-bottom:24px; font-weight:500}
+.cd-circle{width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:32px}
+.cd-circle svg{position:absolute;top:0;left:0}
+.cd-inner{text-align:center;position:relative;z-index:1}
+.cd-number{font-family:'Black Han Sans',sans-serif;font-size:52px;color:#fff;line-height:1}
+.cd-label{font-size:12px;color:rgba(255,255,255,.6);margin-top:4px}
+.btn-skip { background:rgba(255,255,255,.2); border:1px solid rgba(255,255,255,.4); color:#fff; padding:12px 24px; border-radius:24px; font-size:15px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all .2s; }
+.btn-skip:hover { background:rgba(255,255,255,.3); }
+.btn-skip:active { transform:scale(0.96); }
+
+/* Video Screen */
+.video-screen { background: #0b0b0b; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:600px; padding: 20px; }
+.video-title { color: #fff; font-family:'Black Han Sans',sans-serif; font-size: 22px; margin-bottom: 24px; text-align: center; display:flex; align-items:center; gap:8px;}
+.video-wrapper { width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,.5); border: 1px solid #333; }
+
+/* Draw Screen */
+.draw-screen{background:#F5F5F5;display:flex;flex-direction:column;align-items:center;padding:32px 20px;min-height:600px}
+.draw-card{background:#fff;border-radius:20px;padding:24px;width:100%;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.1)}
+.draw-h{font-family:'Black Han Sans',sans-serif;font-size:20px;color:#6C3CE1;margin-bottom:4px}
+.draw-sub{font-size:12px;color:#999;margin-bottom:20px}
+.draw-machine{width:260px;height:260px;border-radius:50%;border:4px solid #E8E8FF;background:#F8F8FF;position:relative;overflow:hidden;margin:0 auto 20px;box-shadow:inset 0 0 20px rgba(0,0,0,0.15)}
+.drawn-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;min-height:52px;margin-bottom:12px;align-items:center; perspective: 800px; transform-style: preserve-3d;}
+.d-ball{
+  width:40px;height:40px;border-radius:50%;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3), inset -3px -3px 8px rgba(0,0,0,0.3);
+  animation: rollForward 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+@keyframes rollForward {
+  0% { transform: translate3d(0, -60px, -300px) rotateX(-720deg); opacity: 0; }
+  100% { transform: translate3d(0, 0, 0) rotateX(0deg); opacity: 1; }
+}
+.draw-status{font-size:13px;color:#666; font-weight: 500;}
+ 
+/* Result Screen */
+.result-screen{background:#F5F5F5;display:flex;flex-direction:column;min-height:600px}
+.result-top{background:linear-gradient(135deg,#6C3CE1,#3B82F6);padding:24px 20px}
+.result-h{font-family:'Black Han Sans',sans-serif;font-size:22px;color:#fff;margin-bottom:4px}
+.result-sub{font-size:12px;color:rgba(255,255,255,.7);margin-bottom:14px}
+.win-row{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.w-ball{width:38px;height:38px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.bonus-sep{color:rgba(255,255,255,.5);font-size:16px}
+.result-body{flex:1;padding:16px 20px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+.r-ticket{background:#fff;border-radius:14px;padding:14px;box-shadow:0 1px 8px rgba(0,0,0,.07)}
+.r-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.r-lbl{font-size:12px;color:#999;font-weight:700}
+.prize{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.r-item{font-size:12px; color:#444; margin-bottom:8px; font-weight:500; display:flex; align-items:center; gap:4px;}
+.r-balls{display:flex;gap:5px;flex-wrap:wrap}
+.r-ball{width:30px;height:30px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.r-ball.hit{box-shadow:0 0 0 2.5px #6C3CE1,0 0 8px rgba(108,60,225,.4)}
+.result-footer{padding:16px 20px 24px}
+.btn-restart{width:100%;padding:15px;background:#fff;border:1.5px solid #ddd;color:#444;font-size:14px;font-weight:700;border-radius:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif}
+</style>
+</head>
+<body>
+<div id="app">
+ 
+<!-- HOME -->
+<div id="s-home" class="screen active">
+  <div class="home-top">
+    <div class="home-logo">🌸 LOTTO</div>
+    <div class="home-balls" id="deco-balls"></div>
+  </div>
+  <div class="home-body">
+    <div class="info-card">
+      <h3>💐 대가족 실속 이벤트</h3>
+      <p>부모님과 친척 모두가 즐거운 로또 추첨! 마트 가성비 선물들이 준비되어 있습니다.</p>
+    </div>
+    <div class="info-card">
+      <h3>📋 참여 방법</h3>
+      <p>① 게임 수 선택 → ② 번호 방식 선택 → ③ 번호 생성 → ④ 생방송 시청 후 실속 상품 확인!</p>
+    </div>
+    <button class="btn-start" onclick="goTo('s-count')">💝 로또 번호 선택</button>
+  </div>
+</div>
+ 
+<!-- COUNT -->
+<div id="s-count" class="screen">
+  <div class="prog-bar"><div class="prog-fill" style="width:33%"></div></div>
+  <div class="page-header">
+    <button class="back-btn" onclick="goTo('s-home')">←</button>
+    <div class="page-title">게임 수 선택</div>
+  </div>
+  <div class="page-body">
+    <div class="step-info">
+      <div class="step-num">STEP 1 / 3</div>
+      <div class="step-q">몇 게임 할까요?</div>
+    </div>
+    <div class="count-row" id="count-row">
+      <button class="c-btn" data-n="1">1</button>
+      <button class="c-btn" data-n="2">2</button>
+      <button class="c-btn" data-n="3">3</button>
+      <button class="c-btn" data-n="4">4</button>
+      <button class="c-btn" data-n="5">5</button>
+    </div>
+    <div style="font-size:12px;color:#999">최대 5게임 선택 가능</div>
+    <button class="btn-next" id="btn-c-next">다음 →</button>
+  </div>
+</div>
+ 
+<!-- METHOD -->
+<div id="s-method" class="screen">
+  <div class="prog-bar"><div class="prog-fill" style="width:66%"></div></div>
+  <div class="page-header">
+    <button class="back-btn" onclick="goTo('s-count')">←</button>
+    <div class="page-title">번호 선택 방식</div>
+  </div>
+  <div class="page-body">
+    <div class="step-info">
+      <div class="step-num">STEP 2 / 3</div>
+      <div class="step-q">어떻게 선택할까요?</div>
+    </div>
+    <div class="method-row">
+      <button class="m-btn" id="mb-auto" onclick="pickMethod('auto')">
+        <div class="m-icon">🎲</div>
+        <div class="m-name">자동</div>
+        <div class="m-desc">컴퓨터가 랜덤으로 골라줘요</div>
+      </button>
+      <button class="m-btn" id="mb-manual" onclick="pickMethod('manual')">
+        <div class="m-icon">✏️</div>
+        <div class="m-name">수동</div>
+        <div class="m-desc">내가 직접 번호를 골라요</div>
+      </button>
+    </div>
+    <button class="btn-next" id="btn-m-next">다음 →</button>
+  </div>
+</div>
+ 
+<!-- MANUAL -->
+<div id="s-manual" class="screen">
+  <div class="prog-bar"><div class="prog-fill" style="width:85%"></div></div>
+  <div class="page-header">
+    <button class="back-btn" onclick="goTo('s-method')">←</button>
+    <div class="page-title" id="manual-ttl">번호 선택 (1게임)</div>
+  </div>
+  <div class="page-body" style="gap:12px">
+    <div class="step-info">
+      <div class="step-num">STEP 3 / 3</div>
+      <div class="step-q" style="font-size:16px">1~45 중 6개 선택</div>
+    </div>
+    <div class="sel-row" id="sel-row"></div>
+    <div class="num-grid" id="num-grid"></div>
+    <button class="btn-next" id="btn-mn-next" onclick="confirmManual()">이 번호로 확정 →</button>
+  </div>
+</div>
+ 
+<!-- PREVIEW -->
+<div id="s-preview" class="screen">
+  <div class="prog-bar"><div class="prog-fill" style="width:100%"></div></div>
+  <div class="page-header">
+    <button class="back-btn" onclick="backFromPreview()">←</button>
+    <div class="page-title">내 번호 확인</div>
+  </div>
+  <div class="page-body">
+    <div class="step-info">
+      <div class="step-num">선택 완료 ✓</div>
+      <div class="step-q">내 로또 번호 🎫</div>
+    </div>
+    <div class="ticket-list" id="ticket-list"></div>
+    <button class="btn-next on" onclick="startCD()">🎬 추첨 대기하기</button>
+  </div>
+</div>
+ 
+<!-- COUNTDOWN -->
+<div id="s-cd" class="screen cd-screen">
+  <div class="live-dot"><span class="dot"></span>LIVE</div>
+  <div class="cd-title">잠시 후 생방송 시작!</div>
+  <div class="cd-sub">추첨 영상까지 남은 시간</div>
+  
+  <div class="cd-circle">
+    <svg width="160" height="160" style="transform:rotate(-90deg)">
+      <circle cx="80" cy="80" r="74" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="6"/>
+      <circle id="cd-arc" cx="80" cy="80" r="74" fill="none" stroke="#fff" stroke-width="6"
+        stroke-dasharray="465" stroke-dashoffset="0" stroke-linecap="round" style="transition:stroke-dashoffset 1s linear"/>
+    </svg>
+    <div class="cd-inner">
+      <div class="cd-number" id="cd-num">120</div>
+      <div class="cd-label">초</div>
+    </div>
+  </div>
+  
+  <button class="btn-skip" onclick="playVideo()">시간 건너뛰기 ⏭</button>
+</div>
+
+<!-- VIDEO PLAYER SCREEN -->
+<div id="s-video" class="screen video-screen">
+  <div class="video-title"><span class="dot" style="display:inline-block;"></span> 로또 생방송 영상</div>
+  <div class="video-wrapper">
+    <video id="draw-video" src="lv_0_20260505112308.mp4" style="width:100%; display:block;" playsinline controls></video>
+  </div>
+  <button class="btn-skip" onclick="runDraw()">추첨 결과 확인하기 ⏭</button>
+</div>
+ 
+<!-- DRAW ANIMATION SCREEN -->
+<div id="s-draw" class="screen draw-screen">
+  <div class="draw-card">
+    <div class="draw-h">🎱 번호 섞는 중!</div>
+    <div class="draw-sub">당첨 번호를 뽑고 있습니다...</div>
+    <div class="draw-machine" id="draw-machine"></div>
+    <div class="drawn-row" id="drawn-row"></div>
+    <div class="draw-status" id="draw-status">번호를 섞고 있습니다...</div>
+  </div>
+</div>
+ 
+<!-- RESULT SCREEN -->
+<div id="s-result" class="screen result-screen">
+  <div class="result-top">
+    <div class="result-h">🏆 추첨 결과</div>
+    <div class="result-sub">이번 회차 당첨 번호</div>
+    <div class="win-row" id="win-row"></div>
+  </div>
+  <div class="result-body" id="result-body"></div>
+  <div class="result-footer">
+    <button class="btn-restart" onclick="restart()">🔄 처음으로 돌아가기</button>
+  </div>
+</div>
+ 
+</div>
+ 
+<script>
+var S={count:0,method:'',tickets:[],curManual:[],manualDone:0,winning:[],bonus:0,cdTimer:null, mixAnim:null};
+ 
+function ballColor(n){
+  if(n<=10)return'#FF4444';
+  if(n<=20)return'#FF8C00';
+  if(n<=30)return'#FBBF24';
+  if(n<=40)return'#3B82F6';
+  return'#8B5CF6';
+}
+ 
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+ 
+document.getElementById('count-row').addEventListener('click',function(e){
+  var btn=e.target.closest('.c-btn');
+  if(!btn)return;
+  S.count=parseInt(btn.getAttribute('data-n'));
+  document.querySelectorAll('.c-btn').forEach(function(b){
+    b.classList.toggle('sel',b.getAttribute('data-n')==String(S.count));
+  });
+  var nxt=document.getElementById('btn-c-next');
+  nxt.classList.add('on');
+  nxt.onclick=function(){goTo('s-method')};
+});
+ 
+function pickMethod(m){
+  S.method=m;
+  document.getElementById('mb-auto').classList.toggle('sel',m==='auto');
+  document.getElementById('mb-manual').classList.toggle('sel',m==='manual');
+  var nxt=document.getElementById('btn-m-next');
+  nxt.classList.add('on');
+  nxt.onclick=goGenerate;
+}
+ 
+function goGenerate(){
+  S.tickets=[];S.manualDone=0;S.curManual=[];
+  if(S.method==='auto'){
+    for(var i=0;i<S.count;i++)S.tickets.push(autoGen());
+    showPreview();
+  } else {
+    openManual();
+  }
+}
+ 
+function autoGen(){
+  var p=new Set();
+  while(p.size<6)p.add(Math.floor(Math.random()*45)+1);
+  return Array.from(p).sort(function(a,b){return a-b});
+}
+ 
+function openManual(){
+  S.curManual=[];
+  document.getElementById('manual-ttl').textContent='번호 선택 ('+(S.manualDone+1)+'게임)';
+  renderGrid();renderSel();
+  var btn=document.getElementById('btn-mn-next');
+  btn.classList.remove('on');
+  goTo('s-manual');
+}
+ 
+function renderGrid(){
+  var g=document.getElementById('num-grid');g.innerHTML='';
+  for(var i=1;i<=45;i++){
+    (function(n){
+      var b=document.createElement('button');b.className='n-btn';b.textContent=n;
+      var picked=S.curManual.indexOf(n)>-1;
+      if(picked){b.classList.add('p');b.style.background=ballColor(n);b.style.borderColor=ballColor(n);}
+      if(!picked&&S.curManual.length>=6)b.disabled=true;
+      b.addEventListener('click',function(){toggleNum(n)});
+      g.appendChild(b);
+    })(i);
+  }
+}
+ 
+function toggleNum(n){
+  var idx=S.curManual.indexOf(n);
+  if(idx>-1)S.curManual.splice(idx,1);
+  else if(S.curManual.length<6)S.curManual.push(n);
+  renderGrid();renderSel();
+  var btn=document.getElementById('btn-mn-next');
+  if(S.curManual.length===6)btn.classList.add('on');else btn.classList.remove('on');
+}
+ 
+function renderSel(){
+  var r=document.getElementById('sel-row');r.innerHTML='';
+  var sorted=S.curManual.slice().sort(function(a,b){return a-b});
+  if(!sorted.length){r.innerHTML='<span style="font-size:12px;color:#bbb">번호를 선택하세요...</span>';return;}
+  sorted.forEach(function(n){
+    var b=document.createElement('div');b.className='sel-ball';
+    b.textContent=n;b.style.background=ballColor(n);r.appendChild(b);
+  });
+}
+ 
+function confirmManual(){
+  if(S.curManual.length!==6)return;
+  S.tickets.push(S.curManual.slice().sort(function(a,b){return a-b}));
+  S.manualDone++;
+  if(S.manualDone<S.count)openManual();else showPreview();
+}
+ 
+function backFromPreview(){
+  if(S.method==='manual'&&S.manualDone>0){
+    S.manualDone--;S.tickets.pop();openManual();
+  } else {goTo('s-method');}
+}
+ 
+function showPreview(){
+  var list=document.getElementById('ticket-list');list.innerHTML='';
+  S.tickets.forEach(function(t,i){
+    var div=document.createElement('div');div.className='ticket';
+    var lbl=document.createElement('div');lbl.className='tkt-lbl';lbl.textContent=(i+1)+'게임';
+    var balls=document.createElement('div');balls.className='tkt-balls';
+    t.forEach(function(n){
+      var b=document.createElement('div');b.className='t-ball';
+      b.textContent=n;b.style.background=ballColor(n);balls.appendChild(b);
+    });
+    div.appendChild(lbl);div.appendChild(balls);list.appendChild(div);
+  });
+  goTo('s-preview');
+}
+ 
+function startCD(){
+  goTo('s-cd');
+  var secs=120,arc=document.getElementById('cd-arc'),numEl=document.getElementById('cd-num');
+  var total=465;arc.style.strokeDashoffset='0';numEl.textContent='120';
+  
+  if(S.cdTimer)clearInterval(S.cdTimer);
+  
+  S.cdTimer=setInterval(function(){
+    secs--;numEl.textContent=secs;
+    arc.style.strokeDashoffset=(total*(1-secs/120));
+    if(secs<=0){
+      clearInterval(S.cdTimer);
+      playVideo();
+    }
+  },1000);
+}
+
+function playVideo(){
+  if(S.cdTimer) clearInterval(S.cdTimer);
+  goTo('s-video');
+  
+  var v = document.getElementById('draw-video');
+  v.currentTime = 0;
+  
+  var playPromise = v.play();
+  if (playPromise !== undefined) {
+    playPromise.catch(function(error) {
+      console.log("브라우저 정책으로 자동 재생이 방지되었습니다. 컨트롤러를 이용해 재생해주세요.");
+    });
+  }
+  
+  v.onended = function() {
+    runDraw();
+  };
+}
+ 
+function runDraw(){
+  if(S.cdTimer) clearInterval(S.cdTimer);
+  var v = document.getElementById('draw-video');
+  v.pause();
+
+  goTo('s-draw');
+  var machine = document.getElementById('draw-machine');
+  var drawnRow = document.getElementById('drawn-row');
+  var statusEl = document.getElementById('draw-status');
+  machine.innerHTML=''; drawnRow.innerHTML='';
+  statusEl.textContent = '기계 안에서 공이 섞이고 있습니다...';
+  
+  var r = 130; 
+  var br = 12; 
+  var mixBalls = [];
+  
+  for(var i=1; i<=45; i++){
+    var b = document.createElement('div');
+    b.style.position = 'absolute';
+    b.style.width = (br*2)+'px';
+    b.style.height = (br*2)+'px';
+    b.style.borderRadius = '50%';
+    b.style.background = ballColor(i);
+    b.style.boxShadow = 'inset -2px -2px 5px rgba(0,0,0,0.3)';
+    b.style.display = 'flex';
+    b.style.alignItems = 'center';
+    b.style.justifyContent = 'center';
+    b.style.color = 'rgba(255,255,255,0.7)';
+    b.style.fontSize = '10px';
+    b.style.fontWeight = 'bold';
+    b.textContent = i;
+    machine.appendChild(b);
+    
+    mixBalls.push({
+      el: b,
+      num: i,
+      x: r - br,
+      y: r - br,
+      vx: (Math.random() - 0.5) * 35,
+      vy: (Math.random() - 0.5) * 35
+    });
+  }
+
+  function animateMixing(){
+    mixBalls.forEach(function(b){
+      b.x += b.vx;
+      b.y += b.vy;
+      
+      b.vy += 0.6; 
+      b.vx *= 0.99;
+      b.vy *= 0.99;
+      
+      var dx = b.x + br - r;
+      var dy = b.y + br - r;
+      var dist = Math.sqrt(dx*dx + dy*dy);
+      
+      if(dist + br > r){
+        var nx = dx / dist;
+        var ny = dy / dist;
+        var vDotN = b.vx * nx + b.vy * ny;
+        
+        b.vx -= 2 * vDotN * nx;
+        b.vy -= 2 * vDotN * ny;
+        
+        var overlap = dist + br - r;
+        b.x -= overlap * nx;
+        b.y -= overlap * ny;
+        
+        b.vx += (Math.random() - 0.5) * 6;
+        b.vy += (Math.random() - 0.5) * 6;
+      }
+      
+      if(Math.abs(b.vx) < 2 && Math.abs(b.vy) < 2 && dy > 0){
+        b.vy -= Math.random() * 25 + 5;
+        b.vx += (Math.random() - 0.5) * 20;
+      }
+      
+      b.el.style.transform = 'translate('+b.x+'px, '+b.y+'px)';
+    });
+    
+    S.mixAnim = requestAnimationFrame(animateMixing);
+  }
+  
+  S.mixAnim = requestAnimationFrame(animateMixing);
+
+  var userNumbers = [];
+  S.tickets.forEach(function(t){ t.forEach(function(num){ userNumbers.push(num); }); });
+  userNumbers = Array.from(new Set(userNumbers));
+
+  var winners=[], allPicked=new Set(), bonus=0, step=0;
+  
+  var di=setInterval(function(){
+    if(step<6){
+      var n; do{
+        // 당첨확률 65% 보정
+        if(userNumbers.length > 0 && Math.random() < 0.65) {
+          n = userNumbers[Math.floor(Math.random() * userNumbers.length)];
+        } else {
+          n = Math.floor(Math.random()*45)+1;
+        }
+      } while(allPicked.has(n));
+      allPicked.add(n); winners.push(n);
+      
+      var ball=document.createElement('div'); ball.className='d-ball';
+      ball.textContent=n; ball.style.background=ballColor(n);
+      drawnRow.appendChild(ball);
+      statusEl.textContent=(step+1)+'번째 번호: '+n;
+      
+      var idx = mixBalls.findIndex(function(mb){ return mb.num === n; });
+      if(idx > -1) {
+        mixBalls[idx].el.remove();
+        mixBalls.splice(idx, 1);
+      }
+      
+      step++;
+    } else if(step===6){
+      var bn; do{
+        if(userNumbers.length > 0 && Math.random() < 0.65) {
+          bn = userNumbers[Math.floor(Math.random() * userNumbers.length)];
+        } else {
+          bn = Math.floor(Math.random()*45)+1;
+        }
+      } while(allPicked.has(bn));
+      bonus=bn;
+      
+      var sep=document.createElement('div');
+      sep.style.cssText='font-size:18px;color:#ccc;display:flex;align-items:center';
+      sep.textContent='+'; drawnRow.appendChild(sep);
+      
+      var bb=document.createElement('div'); bb.className='d-ball';
+      bb.textContent=bn; bb.style.background='#EC4899'; bb.style.border='2px dashed rgba(255,255,255,.6)';
+      drawnRow.appendChild(bb);
+      statusEl.textContent='보너스 번호: '+bn;
+      
+      var idx = mixBalls.findIndex(function(mb){ return mb.num === bn; });
+      if(idx > -1) {
+        mixBalls[idx].el.remove();
+        mixBalls.splice(idx, 1);
+      }
+      
+      step++;
+    } else {
+      clearInterval(di);
+      if(S.mixAnim) cancelAnimationFrame(S.mixAnim); 
+      S.winning=winners.slice().sort(function(a,b){return a-b}); S.bonus=bonus;
+      setTimeout(showResult, 1500); 
+    }
+  }, 1500);
+}
+ 
+function getPrize(ticket,winning,bonus){
+  var wSet=new Set(winning);
+  var match=ticket.filter(function(n){return wSet.has(n)}).length;
+  var hasB=ticket.indexOf(bonus)>-1;
+  
+  // 마트 가성비 상품 리스트 (20만원 예산 기반)
+  if(match===6)return{t:'1등',c:'#6C3CE1',bg:'#F0ECFF', item:'마트 상품권 3만원'};
+  if(match===5&&hasB)return{t:'2등',c:'#FF8C00',bg:'#FFF3E0', item:'☕커피'};
+  if(match===5)return{t:'3등',c:'#22C55E',bg:'#F0FFF4', item:'술안주 사오는 쿠폰'};
+  if(match===4)return{t:'4등',c:'#3B82F6',bg:'#EFF6FF', item:'🍜 라면'};
+  if(match===3)return{t:'5등',c:'#8B5CF6',bg:'#F5F3FF', item:'🥤 탄산음료'};
+  return{t:'낙첨',c:'#999',bg:'#F5F5F5', item:' 설거지권'};
+}
+ 
+function showResult(){
+  var wr=document.getElementById('win-row');wr.innerHTML='';
+  S.winning.forEach(function(n){
+    var b=document.createElement('div');b.className='w-ball';
+    b.textContent=n;b.style.background=ballColor(n);wr.appendChild(b);
+  });
+  var sep=document.createElement('div');sep.className='bonus-sep';sep.textContent='+';wr.appendChild(sep);
+  var bb=document.createElement('div');bb.className='w-ball';
+  bb.textContent=S.bonus;bb.style.background='#EC4899';wr.appendChild(bb);
+ 
+  var body=document.getElementById('result-body');body.innerHTML='';
+  var wSet=new Set(S.winning);
+  S.tickets.forEach(function(t,i){
+    var prize=getPrize(t,S.winning,S.bonus);
+    var div=document.createElement('div');div.className='r-ticket';
+    var top=document.createElement('div');top.className='r-top';
+    var lbl=document.createElement('div');lbl.className='r-lbl';lbl.textContent=(i+1)+'게임';
+    var badge=document.createElement('div');badge.className='prize';
+    badge.textContent=prize.t;badge.style.color=prize.c;badge.style.background=prize.bg;
+    
+    var itemDiv=document.createElement('div');itemDiv.className='r-item';
+    itemDiv.innerHTML=`<span>🎁 상품: </span><b>${prize.item}</b>`;
+    
+    top.appendChild(lbl);top.appendChild(badge);
+    var balls=document.createElement('div');balls.className='r-balls';
+    t.forEach(function(n){
+      var b=document.createElement('div');b.className='r-ball';
+      b.textContent=n;b.style.background=ballColor(n);
+      if(wSet.has(n))b.classList.add('hit');
+      balls.appendChild(b);
+    });
+    div.appendChild(top);
+    div.appendChild(itemDiv);
+    div.appendChild(balls);body.appendChild(div);
+  });
+  goTo('s-result');
+}
+ 
+function restart(){
+  if(S.cdTimer)clearInterval(S.cdTimer);
+  if(S.mixAnim)cancelAnimationFrame(S.mixAnim); 
+  
+  var v = document.getElementById('draw-video');
+  if(v) { v.pause(); v.currentTime = 0; }
+  
+  S={count:0,method:'',tickets:[],curManual:[],manualDone:0,winning:[],bonus:0,cdTimer:null, mixAnim:null};
+  document.querySelectorAll('.c-btn').forEach(function(b){b.classList.remove('sel')});
+  document.getElementById('btn-c-next').classList.remove('on');
+  document.getElementById('btn-c-next').onclick=null;
+  document.getElementById('btn-m-next').classList.remove('on');
+  document.getElementById('btn-m-next').onclick=null;
+  goTo('s-home');
+}
+ 
+var db=document.getElementById('deco-balls');
+[7,14,27,33,41].forEach(function(n,i){
+  var b=document.createElement('div');b.className='h-ball';
+  b.textContent=n;b.style.background=ballColor(n);
+  b.style.animationDelay=(i*0.4)+'s';db.appendChild(b);
+});
+</script>
+</body>
+</html>
